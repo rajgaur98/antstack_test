@@ -1,24 +1,47 @@
-import React from 'react';
+import React, { Component } from 'react';
+import Inputs from './Inputs';
 
-function Form(props) {
-    return(
-        <form>
-          <div className="border-class">
-            <label for="name">Name: </label>
-            <input className="inputs" type="text" id="name" /><br />
-            <label for="designation">Designation: </label>
-            <input className="inputs" type="text" id="designation" /><br />
-            <label for="contact">Contact Details: </label>
-            <input className="inputs" type="text" id="contact" /><br />
-            <label for="skills">Skills: </label>
-            <input className="inputs" type="text" id="skills" /><br />
-            <label for="dob">Date of Birth: </label>
-            <input className="inputs" type="date" id="dob" />
-          </div>
-          <input className="btn btn-default" type="submit" value="Add Employee"/>
-          <button className="btn btn-default">View Data</button>
-        </form>
+class Form extends Component {
+  state = {
+    formArray: [],
+    inputData: [],
+    toggle: this.props.toggle,
+  };
+
+  componentDidUpdate(prevProps){
+    if(prevProps.numOfForms !== this.props.numOfForms)
+      this.setForms();
+    if(prevProps.toggle !== this.props.toggle)
+      this.toggleForInputs();
+  }
+
+  componentDidMount(){
+    this.setForms();
+  }
+
+  render(){
+    return this.state.formArray.map(
+      (element) => element
     );
+  }
+
+  setForms = () => {
+    this.setState({formArray: [...Array(this.props.numOfForms)].map((e, i) => 
+      (
+        <Inputs key={i} toggle={this.state.toggle} addFormData={this.addFormData} />
+      )
+    )});
+  }
+
+  toggleForInputs = () => {
+    this.setState({toggle: !this.state.toggle}, () => this.setForms());
+  }
+
+  addFormData = (data) => {
+    this.setState((state, props) => ({
+      inputData: [...state.inputData, data]
+    }), () => this.props.backToApp(this.state.inputData));
+  }
 }
 
 export default Form;
