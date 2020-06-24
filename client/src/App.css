@@ -1,0 +1,26 @@
+.body-container{
+  max-width: 800px;
+  margin: auto;
+  padding: 10px;
+}
+
+.container, .container-fluid{
+  margin: 50px auto;
+}
+
+.inputs{
+  float: right;
+}
+
+.border-class {
+  border-style: solid;
+  padding: 20px 10px;
+}
+
+.header-class{
+  text-align: center;
+}
+
+.btn {
+  margin: 10px;
+}
