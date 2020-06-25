@@ -10,17 +10,23 @@ function ViewData(props) {
                 <p>Designation: {employee.designation}</p>
                 <p>Contact Details: {employee.contact.map(
                     (e, i) => {
-                        if(i === employee.contact.length-1) return e.value;
-                        return (e.value + ',');
-                    }
-                )}</p>
-                <p>Skills: {employee.skills.map(
-                    (e, i) => {
-                        if(i === employee.skills.length-1) return e;
+                        if(i === employee.contact.length-1) return e;
                         return (e + ',');
                     }
                 )}</p>
-                <p>DOB: {employee.dob}</p>
+                { employee.skills === undefined? null: 
+                    <p>Skills: {employee.skills.map(
+                        (e, i) => {
+                            if(i === employee.skills.length-1) return e;
+                            return (e + ',');
+                        }
+                    )}</p>
+                }
+                {
+                    employee.dob === undefined? null: 
+                    <p>DOB: {employee.dob}</p>
+                }
+                <br />
             </div>
         )
     ));

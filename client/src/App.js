@@ -9,6 +9,7 @@ class App extends Component {
   state = {
     numOfForms: 1,
     employeeData: [],
+    isShowingData: false,
     toggle: false,
   }
 
@@ -17,7 +18,11 @@ class App extends Component {
   }
 
   addData = () => {
-    this.setState({toggle: !this.state.toggle});
+    this.setState({toggle: !this.state.toggle, isShowingData: false});
+  }
+
+  showData = () => {
+    this.setState({isShowingData: true});
   }
 
   backToApp = (data) => {
@@ -45,14 +50,20 @@ class App extends Component {
 
   render(){
     return (
-      <div className="body-container">
+      <div className="container body-container">
         <Header />
         <Form numOfForms={this.state.numOfForms} toggle={this.state.toggle} backToApp={this.backToApp}/>
-        <button className="btn btn-default" onClick={this.addFormField}>Add Employee</button>
-        <button className="btn btn-default" onClick={this.addData}>Add Data</button>
-        <button className="btn btn-default" >View Data</button>
-        <ViewData employeeData={this.state.employeeData}/>
-        <button className="btn btn-default" onClick={this.exportToJson}>Download JSON</button>
+        <button className="btn btn-default col-md-3" onClick={this.addFormField}>Add Employee</button>
+        <button className="btn btn-default col-md-3" onClick={this.addData}>Submit Data</button>
+        <button className="btn btn-default col-md-3" onClick={this.showData}>View Data</button>
+        {
+          this.state.isShowingData?
+          <div className="border-class">
+            <ViewData employeeData={this.state.employeeData}/>
+            <button className="btn btn-default" onClick={this.exportToJson}>Download JSON</button>
+          </div>
+          : null
+        }
       </div>
     );
   }

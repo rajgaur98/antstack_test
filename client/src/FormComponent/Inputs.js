@@ -58,7 +58,19 @@ export class Inputs extends Component {
     componentDidUpdate(prevProps){
         if(prevProps.toggle !== this.props.toggle){
             if(this.validate(this.state)){
-                this.props.addFormData(this.state);
+                let finalData = {
+                    name: this.state.name,
+                    designation: this.state.designation,
+                    contact: this.state.contact.map((e) => e.value),
+                }
+                let skills = [];
+                for(let i=0; i<this.state.skills.length; i++){
+                    let skill = this.state.skills[i];
+                    if(skill.length > 0) skills.push(skill);
+                }
+                if(skills.length > 0) finalData.skills = skills;
+                if(this.state.dob !== '') finalData.dob = this.state.dob; 
+                this.props.addFormData(finalData);
                 this.setDefaultState();
             }
         }
