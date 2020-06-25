@@ -5,9 +5,11 @@ export class Inputs extends Component {
     state = {
         name: '',
         designation: '',
-        contact: '',
-        skills: '',
+        contact: [],
+        skills: [],
         dob: '',
+        numOfContacts: 1,
+        numOfSkills: 1,
     };
 
     onChange = (event) => {
@@ -36,8 +38,8 @@ export class Inputs extends Component {
         this.setState({
             name: '',
             designation: '',
-            contact: '',
-            skills: '',
+            contact: [],
+            skills: [],
             dob: '',
         });
     }
@@ -51,9 +53,13 @@ export class Inputs extends Component {
                     <label htmlFor="designation">Designation: </label>
                     <input className="inputs" type="text" value={this.state.designation} name="designation" onChange={this.onChange}/><br />
                     <label htmlFor="contact">Contact Details: </label>
-                    <input className="inputs" type="text" value={this.state.contact} name="contact" onChange={this.onChange}/><br />
+                    <input className="inputs" type="text" value={this.state.contact} name="contact" onChange={this.onChange}/>
+                    <button className="btn btn-default">+</button>
+                    <br />
                     <label htmlFor="skills">Skills: </label>
-                    <input className="inputs" type="text" value={this.state.skills} name="skills" onChange={this.onChange}/><br />
+                    <input className="inputs" type="text" value={this.state.skills} name="skills" onChange={this.onChange}/>
+                    <button className="btn btn-default">+</button>
+                    <br />
                     <label htmlFor="dob">Date of Birth: </label>
                     <input className="inputs" type="date" value={this.state.dob} name="dob" onChange={this.onChange}/>
                 </div>
