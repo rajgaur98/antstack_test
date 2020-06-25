@@ -34,7 +34,7 @@ class Form extends Component {
   }
 
   toggleForInputs = () => {
-    this.setState({toggle: !this.state.toggle}, () => this.setForms());
+    this.setState({toggle: !this.state.toggle, inputData: []}, () => this.setForms());
   }
 
   addFormData = (data) => {

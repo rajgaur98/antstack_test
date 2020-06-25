@@ -4,21 +4,41 @@ export class Inputs extends Component {
 
     state = {
         name: '',
+        errorInName: false,
         designation: '',
-        contact: [''],
+        errorInDesg: false,
+        contact: [{value: '', error: false}],
         skills: [''],
         dob: '',
     };
 
-    onChange = (event) => {
+    onNameChange = (event) => {
         event.persist();
-        this.setState({[event.target.name]: event.target.value}); 
+        this.setState({
+            name: event.target.value,
+            errorInName: event.target.value.length > 0? false: true,
+        }); 
+    }
+
+    onDesgChange = (event) => {
+        event.persist();
+        this.setState({
+            designation: event.target.value,
+            errorInDesg: event.target.value.length > 0? false: true,
+        }); 
+    }
+
+    onDOBChange = (event) => {
+        event.persist();
+        this.setState({
+            dob: event.target.value,
+        }); 
     }
 
     onContactChange = (index) => (event) => {
         event.persist();
         this.setState(state => {
-            let contact = state.contact.map((e, i) => i === index? event.target.value: e);
+            let contact = state.contact.map((e, i) => i === index? {value: event.target.value, error: event.target.value.match(/^\d{10}$/)? false: true}: e);
             return {
                 contact,
             }
@@ -45,11 +65,25 @@ export class Inputs extends Component {
     }
 
     validate(fields){
-        if(fields.name.length === 0) return false;
-        if(fields.designation.length === 0) return false;
+        if(fields.name.length === 0) {
+            this.setState({errorInName: true});
+            return false;
+        }
+        if(fields.designation.length === 0) {
+            this.setState({errorInDesg: true});
+            return false;
+        }
         // reference from https://www.w3resource.com/javascript/form/phone-no-validation.php for the below regex
         for(let i=0; i<fields.contact.length; i++)
-            if(!fields.contact[i].match(/^\d{10}$/)) return false;
+            if(!fields.contact[i].value.match(/^\d{10}$/)) {
+                this.setState(state => {
+                    let contact = state.contact.map((e, ind) => ind === i? {value: fields.contact[i].value, error: true}: e);
+                    return {
+                        contact,
+                    }
+                });
+                return false;
+            };
         return true;
     }
 
@@ -57,7 +91,7 @@ export class Inputs extends Component {
         this.setState({
             name: '',
             designation: '',
-            contact: [''],
+            contact: [{value: '', error: false}],
             skills: [''],
             dob: '',
         });
@@ -72,6 +106,13 @@ export class Inputs extends Component {
         }
     }
 
+    removeContactField = (index) => (event) => {
+        event.preventDefault();
+        this.setState((state, props) => ({
+            contact: state.contact.filter((e, i) => i !== index)
+        }));
+    }
+
     addSkillField = (e) => {
         e.preventDefault();
         if(this.state.skills.length < 20){
@@ -81,26 +122,48 @@ export class Inputs extends Component {
         }
     }
 
+    removeSkillField = (index) => (event) => {
+        event.preventDefault();
+        this.setState((state, props) => ({
+            skills: state.skills.filter((e, i) => i !== index)
+        }));
+    }
+
     render() {
         return (
             <form>
                 <div className="border-class">
                     <label htmlFor="name">Name: </label>
-                    <input className="inputs" type="text" value={this.state.name} name="name" onChange={this.onChange}/><br />
+                    {
+                        this.state.errorInName? 'length of name should be greater than 0': null
+                    }
+                    <input className="inputs" type="text" value={this.state.name} name="name" onChange={this.onNameChange}/><br />
                     <label htmlFor="designation">Designation: </label>
-                    <input className="inputs" type="text" value={this.state.designation} name="designation" onChange={this.onChange}/><br />
+                    {
+                        this.state.errorInDesg? 'length of designation should be greater than 0': null
+                    }
+                    <input className="inputs" type="text" value={this.state.designation} name="designation" onChange={this.onDesgChange}/><br />
                     <label htmlFor="contact">Contact Details: </label>
-                    <button className="btn btn-default" onClick={this.addContactField}>+</button>
+                    <button onClick={this.addContactField}>+</button>
                     {
                         this.state.contact.map((e, i) => {
                             return i === 0? (
                                 <React.Fragment key={i}>
-                                    <input className="inputs" type="text" value={e} onChange={this.onContactChange(i)}/>
+                                    {
+                                        e.error? 'length should be 10 and no alphabets': null
+                                    }
+                                    <input className="inputs" type="text" value={e.value} onChange={this.onContactChange(i)}/>
                                     <br />
                                 </React.Fragment>
                             ): (
                                 <React.Fragment key={i}>
-                                    <input className="inputs" type="text" value={e} onChange={this.onContactChange(i)}/>
+                                    {
+                                        e.error? 'length should be 10 and no alphabets': null
+                                    }
+                                    <div className="inputs">
+                                        <input type="text" value={e.value} onChange={this.onContactChange(i)}/>
+                                        <button onClick={this.removeContactField(i)}>-</button>
+                                    </div>
                                     <br /><br />
                                 </React.Fragment>
                             );
@@ -108,7 +171,7 @@ export class Inputs extends Component {
                     }
                     <br />
                     <label htmlFor="skills">Skills: </label>
-                    <button className="btn btn-default" onClick={this.addSkillField}>+</button>
+                    <button onClick={this.addSkillField}>+</button>
                     {
                         this.state.skills.map((e, i) => {
                             return i === 0 ?(
@@ -118,7 +181,10 @@ export class Inputs extends Component {
                                 </React.Fragment>
                             ): (
                                 <React.Fragment key={i}>
-                                    <input className="inputs" type="text" value={e} onChange={this.onSkillsChange(i)}/>
+                                    <div className="inputs">
+                                        <input type="text" value={e} onChange={this.onSkillsChange(i)}/>
+                                        <button onClick={this.removeSkillField(i)}>-</button>
+                                    </div>
                                     <br /><br />
                                 </React.Fragment>
                             );
@@ -126,7 +192,7 @@ export class Inputs extends Component {
                     }
                     <br />
                     <label htmlFor="dob">Date of Birth: </label>
-                    <input className="inputs" type="date" value={this.state.dob} name="dob" onChange={this.onChange}/>
+                    <input className="inputs" type="date" value={this.state.dob} name="dob" onChange={this.onDOBChange}/>
                 </div>
             </form>
         )
