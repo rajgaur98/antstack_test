@@ -71,9 +71,9 @@ export class Inputs extends Component {
                 if(skills.length > 0) finalData.skills = skills;
                 if(this.state.dob !== '') finalData.dob = this.state.dob; 
                 this.props.addFormData(finalData);
-                this.setDefaultState();
             }
         }
+        if(prevProps.clearFormData !== this.props.clearFormData && this.props.clearFormData) this.setDefaultState();
     }
 
     validate(fields){
@@ -144,7 +144,7 @@ export class Inputs extends Component {
     render() {
         return (
             <form>
-                <div className="border-class">
+                <div>
                     <label htmlFor="name">Name: </label>
                     {
                         this.state.errorInName? 'length of name should be greater than 0': null
