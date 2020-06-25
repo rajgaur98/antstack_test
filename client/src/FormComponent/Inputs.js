@@ -5,15 +5,34 @@ export class Inputs extends Component {
     state = {
         name: '',
         designation: '',
-        contact: [],
-        skills: [],
+        contact: [''],
+        skills: [''],
         dob: '',
-        numOfContacts: 1,
-        numOfSkills: 1,
     };
 
     onChange = (event) => {
-        this.setState({[event.target.name]: event.target.value});
+        event.persist();
+        this.setState({[event.target.name]: event.target.value}); 
+    }
+
+    onContactChange = (index) => (event) => {
+        event.persist();
+        this.setState(state => {
+            let contact = state.contact.map((e, i) => i === index? event.target.value: e);
+            return {
+                contact,
+            }
+        }, () => {console.log(this.state.contact)});
+    }
+
+    onSkillsChange = (index) => (event) => {
+        event.persist();
+        this.setState(state => {
+            let skills = state.skills.map((e, i) => i === index? event.target.value: e);
+            return {
+                skills,
+            }
+        }, () => {console.log(this.state.skills)});
     }
 
     componentDidUpdate(prevProps){
@@ -26,11 +45,11 @@ export class Inputs extends Component {
     }
 
     validate(fields){
-        console.log('in vlaidate');
         if(fields.name.length === 0) return false;
         if(fields.designation.length === 0) return false;
         // reference from https://www.w3resource.com/javascript/form/phone-no-validation.php for the below regex
-        if(!fields.contact.match(/^\d{10}$/)) return false;
+        for(let i=0; i<fields.contact.length; i++)
+            if(!fields.contact[i].match(/^\d{10}$/)) return false;
         return true;
     }
 
@@ -38,10 +57,28 @@ export class Inputs extends Component {
         this.setState({
             name: '',
             designation: '',
-            contact: [],
-            skills: [],
+            contact: [''],
+            skills: [''],
             dob: '',
         });
+    }
+
+    addContactField = (e) => {
+        e.preventDefault();
+        if(this.state.contact.length < 4){
+            this.setState((state, props) => ({
+                contact: [...state.contact, '']
+            }));
+        }
+    }
+
+    addSkillField = (e) => {
+        e.preventDefault();
+        if(this.state.skills.length < 20){
+            this.setState((state, props) => ({
+                skills: [...state.skills, '']
+            }));
+        }
     }
 
     render() {
@@ -53,12 +90,40 @@ export class Inputs extends Component {
                     <label htmlFor="designation">Designation: </label>
                     <input className="inputs" type="text" value={this.state.designation} name="designation" onChange={this.onChange}/><br />
                     <label htmlFor="contact">Contact Details: </label>
-                    <input className="inputs" type="text" value={this.state.contact} name="contact" onChange={this.onChange}/>
-                    <button className="btn btn-default">+</button>
+                    <button className="btn btn-default" onClick={this.addContactField}>+</button>
+                    {
+                        this.state.contact.map((e, i) => {
+                            return i === 0? (
+                                <React.Fragment key={i}>
+                                    <input className="inputs" type="text" value={e} onChange={this.onContactChange(i)}/>
+                                    <br />
+                                </React.Fragment>
+                            ): (
+                                <React.Fragment key={i}>
+                                    <input className="inputs" type="text" value={e} onChange={this.onContactChange(i)}/>
+                                    <br /><br />
+                                </React.Fragment>
+                            );
+                        })
+                    }
                     <br />
                     <label htmlFor="skills">Skills: </label>
-                    <input className="inputs" type="text" value={this.state.skills} name="skills" onChange={this.onChange}/>
-                    <button className="btn btn-default">+</button>
+                    <button className="btn btn-default" onClick={this.addSkillField}>+</button>
+                    {
+                        this.state.skills.map((e, i) => {
+                            return i === 0 ?(
+                                <React.Fragment key={i}>
+                                    <input className="inputs" type="text" value={e} onChange={this.onSkillsChange(i)}/>
+                                    <br />
+                                </React.Fragment>
+                            ): (
+                                <React.Fragment key={i}>
+                                    <input className="inputs" type="text" value={e} onChange={this.onSkillsChange(i)}/>
+                                    <br /><br />
+                                </React.Fragment>
+                            );
+                        })
+                    }
                     <br />
                     <label htmlFor="dob">Date of Birth: </label>
                     <input className="inputs" type="date" value={this.state.dob} name="dob" onChange={this.onChange}/>
