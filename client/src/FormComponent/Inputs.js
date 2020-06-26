@@ -42,7 +42,7 @@ export class Inputs extends Component {
             return {
                 contact,
             }
-        }, () => {console.log(this.state.contact)});
+        });
     }
 
     onTypeChange = (index) => (event) => {
@@ -52,7 +52,7 @@ export class Inputs extends Component {
             return {
                 contact,
             }
-        }, () => {console.log(this.state.contact)});
+        });
     }
 
     onSkillsChange = (index) => (event) => {
@@ -62,7 +62,7 @@ export class Inputs extends Component {
             return {
                 skills,
             }
-        }, () => {console.log(this.state.skills)});
+        });
     }
 
     componentDidUpdate(prevProps){
