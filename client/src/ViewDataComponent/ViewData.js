@@ -10,8 +10,8 @@ function ViewData(props) {
                 <p>Designation: {employee.designation}</p>
                 <p>Contact Details: {employee.contact.map(
                     (e, i) => {
-                        if(i === employee.contact.length-1) return e;
-                        return (e + ',');
+                        if(i === employee.contact.length-1) return (e.type + '-' + e.number);
+                        return (e.type + '-' + e.number + ',');
                     }
                 )}</p>
                 { employee.skills === undefined? null: 

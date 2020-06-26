@@ -60,7 +60,10 @@ class App extends Component {
           this.state.isShowingData?
           <div className="border-class">
             <ViewData employeeData={this.state.employeeData}/>
-            <button className="btn btn-default" onClick={this.exportToJson}>Download JSON</button>
+            {
+              this.state.employeeData.length === 0? <p>Please enter some data first</p>: 
+              <button className="btn btn-default" onClick={this.exportToJson}>Download JSON</button>
+            }
           </div>
           : null
         }

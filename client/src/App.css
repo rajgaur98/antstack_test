@@ -24,3 +24,15 @@
 .btn {
   margin: 10px;
 }
+
+.delete-button {
+  margin: 0 auto;
+  display: block;
+  margin-bottom: 30px;
+}
+
+.error-msg {
+  font-size: small;
+  color: red;
+  float: right;
+}

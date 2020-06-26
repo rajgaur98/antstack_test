@@ -7,7 +7,7 @@ export class Inputs extends Component {
         errorInName: false,
         designation: '',
         errorInDesg: false,
-        contact: [{value: '', error: false}],
+        contact: [{type: '', value: '', typeError: false, error: false}],
         skills: [''],
         dob: '',
     };
@@ -38,7 +38,17 @@ export class Inputs extends Component {
     onContactChange = (index) => (event) => {
         event.persist();
         this.setState(state => {
-            let contact = state.contact.map((e, i) => i === index? {value: event.target.value, error: event.target.value.match(/^\d{10}$/)? false: true}: e);
+            let contact = state.contact.map((e, i) => i === index? {type: e.type, value: event.target.value, error: event.target.value.match(/^\d{10}$/)? false: true, typeError: e.typeError}: e);
+            return {
+                contact,
+            }
+        }, () => {console.log(this.state.contact)});
+    }
+
+    onTypeChange = (index) => (event) => {
+        event.persist();
+        this.setState(state => {
+            let contact = state.contact.map((e, i) => i === index? {type: event.target.value, value: e.value, error: e.error, typeError: event.target.value.length > 0? false: true}: e);
             return {
                 contact,
             }
@@ -61,7 +71,7 @@ export class Inputs extends Component {
                 let finalData = {
                     name: this.state.name,
                     designation: this.state.designation,
-                    contact: this.state.contact.map((e) => e.value),
+                    contact: this.state.contact.map((e) => ({type: e.type, number: e.value})),
                 }
                 let skills = [];
                 for(let i=0; i<this.state.skills.length; i++){
@@ -87,9 +97,9 @@ export class Inputs extends Component {
         }
         // reference from https://www.w3resource.com/javascript/form/phone-no-validation.php for the below regex
         for(let i=0; i<fields.contact.length; i++)
-            if(!fields.contact[i].value.match(/^\d{10}$/)) {
+            if(!fields.contact[i].value.match(/^\d{10}$/) || fields.contact[i].type.length === 0) {
                 this.setState(state => {
-                    let contact = state.contact.map((e, ind) => ind === i? {value: fields.contact[i].value, error: true}: e);
+                    let contact = state.contact.map((e, ind) => ind === i? {type: e.type, value: e.value, typeError: e.type.length === 0? true: false ,error: e.value.match(/^\d{10}$/)? false: true}: e);
                     return {
                         contact,
                     }
@@ -103,7 +113,7 @@ export class Inputs extends Component {
         this.setState({
             name: '',
             designation: '',
-            contact: [{value: '', error: false}],
+            contact: [{type: '', value: '', error: false, typeError: false}],
             skills: [''],
             dob: '',
         });
@@ -113,7 +123,7 @@ export class Inputs extends Component {
         e.preventDefault();
         if(this.state.contact.length < 4){
             this.setState((state, props) => ({
-                contact: [...state.contact, '']
+                contact: [...state.contact, {type: '', value: '', error: false, typeError: false}]
             }));
         }
     }
@@ -146,37 +156,45 @@ export class Inputs extends Component {
             <form>
                 <div>
                     <label htmlFor="name">Name: </label>
-                    {
-                        this.state.errorInName? 'length of name should be greater than 0': null
-                    }
                     <input className="inputs" type="text" value={this.state.name} name="name" onChange={this.onNameChange}/><br />
-                    <label htmlFor="designation">Designation: </label>
                     {
-                        this.state.errorInDesg? 'length of designation should be greater than 0': null
+                        this.state.errorInName? <span><span className="error-msg">length of name should be greater than 0</span><br /></span>: null
                     }
+                    <label htmlFor="designation">Designation: </label>
                     <input className="inputs" type="text" value={this.state.designation} name="designation" onChange={this.onDesgChange}/><br />
+                    {
+                        this.state.errorInDesg? <span><span className="error-msg">length of designation should be greater than 0</span><br /></span>: null
+                    }
                     <label htmlFor="contact">Contact Details: </label>
                     <button onClick={this.addContactField}>+</button>
                     {
                         this.state.contact.map((e, i) => {
                             return i === 0? (
                                 <React.Fragment key={i}>
+                                    <input className="inputs" type="text" placeholder="Phone number" value={e.value} onChange={this.onContactChange(i)}/>
+                                    <input className="inputs" type="text" placeholder="Type" value={e.type} onChange={this.onTypeChange(i)}/>
                                     {
-                                        e.error? 'length should be 10 and no alphabets': null
+                                        e.typeError? <span><br /><span className="error-msg">Enter a type</span></span>: null 
                                     }
-                                    <input className="inputs" type="text" value={e.value} onChange={this.onContactChange(i)}/>
                                     <br />
+                                    {
+                                        e.error? <span><span className="error-msg">Enter a valid 10 digit number</span><br /></span>: null
+                                    }
                                 </React.Fragment>
                             ): (
                                 <React.Fragment key={i}>
-                                    {
-                                        e.error? 'length should be 10 and no alphabets': null
-                                    }
                                     <div className="inputs">
-                                        <input type="text" value={e.value} onChange={this.onContactChange(i)}/>
-                                        <button onClick={this.removeContactField(i)}>-</button>
+                                        <button className="inputs" onClick={this.removeContactField(i)}>-</button>
+                                        <input className="inputs" type="text" placeholder="Phone number" value={e.value} onChange={this.onContactChange(i)} />
+                                        <input className="inputs" type="text" placeholder="Type" value={e.type} onChange={this.onTypeChange(i)} />
+                                        {
+                                            e.typeError? <span><br /><span className="error-msg">Enter a type</span></span>: null 
+                                        }
                                     </div>
                                     <br /><br />
+                                    {
+                                        e.error? <span><span className="error-msg">Enter a valid 10 digit number</span><br /></span>: null
+                                    }
                                 </React.Fragment>
                             );
                         })
@@ -204,7 +222,7 @@ export class Inputs extends Component {
                     }
                     <br />
                     <label htmlFor="dob">Date of Birth: </label>
-                    <input className="inputs" type="date" value={this.state.dob} name="dob" onChange={this.onDOBChange}/>
+                    <input className="inputs" type="date" max="2001-01-01" value={this.state.dob} name="dob" onChange={this.onDOBChange}/>
                 </div>
             </form>
         )

@@ -20,7 +20,7 @@ class Form extends Component {
   render(){
     return this.state.formArray.map((e, i) =>
       ( <div className="border-class" key={i}>
-          {i === 0? null: <button onClick={this.deleteForm(i)}>x</button>}
+          {i === 0? null: <button className="delete-button" onClick={this.deleteForm(i)}>x</button>}
           <Inputs key={i} toggle={this.state.toggle} addFormData={this.addFormData} clearFormData={this.state.clearFormData}/>
         </div>
       )
