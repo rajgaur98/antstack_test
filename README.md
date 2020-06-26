@@ -1,2 +1,2 @@
 # antstack_test
-# cd to client and then run npm start to run the react app
+ cd to client and then run npm start to run the react app
